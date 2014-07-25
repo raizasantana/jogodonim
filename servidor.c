@@ -15,7 +15,7 @@
 
 int sck_usuarios[MAX], sck_watcher;
 char *lista_usuarios[MAX], *watcher;
-static int indice = -1, partida = 0, watchers = 0; 
+static int indice = -1, partida = 0, watchers = 0, rodada = 0; 
 static int palitos[3];
 
 /*
@@ -49,23 +49,6 @@ void binder(int sock, struct sockaddr_in server)
 	}
 }
 
-void montar_palitos()
-{	
-	int i = 0;
-	char *mensagem = malloc(1000), *temp = malloc(1000);
-	
-
-	for(i = 0; i < 3; i++)
-	{
-		palitos[i] = rand()% 8 + 2;	
-		sprintf(temp,"Fileira %d: %d\n",i,palitos[i]);
-		strcat(mensagem,temp);
-	}
-	printf("%s",mensagem);	
-}
-
-
-
 void enviar_mensagem(char *msg, int sock)
 {
 	if( send(sock , msg , strlen(msg) , 0) < 0)
@@ -96,8 +79,8 @@ void add_player(char *nickname, int sock)
 	lista_usuarios[indice] = nickname;
 	sck_usuarios[indice] = sock;
 	printf("%d usuário conectado ao servidor.\n\n",indice+1);
-	sprintf(msg, "Usuário %s is online.",nickname);
-	enviar_mensagem(msg,sock);
+	//sprintf(msg, "Usuário %s is online.",nickname);
+	//enviar_mensagem(msg,sock);
 }
 
 void add_watcher(char *nickname, int sock)
@@ -107,7 +90,7 @@ void add_watcher(char *nickname, int sock)
 	watcher = malloc(10);
 	watcher = nickname;
 	sck_watcher =  sock;
-	sprintf(msg, "Usuário %s is online.",nickname);
+	sprintf(msg, "Usuário %s is online.\n",nickname);
 	enviar_mensagem(msg,sock);
 }
 
@@ -116,6 +99,24 @@ void lista_usuarios_online()
 	int i;
 	for(i = 0; i <= indice; i++)
 		printf("Nickname: %s | Socket: %d\n",lista_usuarios[i], sck_usuarios[i]);
+}
+
+void enviar_anunciado()
+{	
+	int i = 0;
+	char *mensagem = malloc(1000), *temp = malloc(1000);
+	
+	rodada++;
+	sprintf(temp,"\n%d Rodada.\n",rodada);
+	strcat(mensagem,temp);
+	for(i = 0; i < 3; i++)
+	{
+		palitos[i] = rand()% 8 + 2;	
+		sprintf(temp,"Fileira %d: %d\n",i,palitos[i]);
+		strcat(mensagem,temp);
+	}
+	printf("%s",mensagem);	
+	enviar_mensagem(mensagem,sck_usuarios[0]);
 }
 
 void *connection_handler(void *socket_desc)
@@ -137,8 +138,8 @@ void *connection_handler(void *socket_desc)
 	else
 		add_watcher(nickname,sock);
 
-	printf("%d\n",indice);
-	montar_palitos();
+	if(indice == 1)
+		enviar_anunciado();
 	/*if(indice == 0)
 	{
 		printf("Hey bitch!");

@@ -79,10 +79,16 @@ int main(int argc , char *argv[])
 	puts(mensagem);
 	scanf("%s",mensagem);
 	enviar_mensagem(mensagem, sock);
+	
+	puts("\nEsperando partida iniciar.\n");
+
 	//Result
 	mensagem = get_msg(sock, 0); 
 	puts(mensagem);
-
+	
+	//Primeira rodada
+	//mensagem = get_msg(sock, 0); 
+	//puts(mensagem);
 	
 	/*if(strcmp(iniciar, "S") == 0)
 	{
