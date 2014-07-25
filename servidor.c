@@ -53,18 +53,15 @@ void montar_palitos()
 {	
 	int i = 0;
 	char *mensagem = malloc(1000), *temp = malloc(1000);
-	temp = "";
-	mensagem  = "";
+	
 
-	//for(i = 0; i < 3; i++)
-	//{
+	for(i = 0; i < 3; i++)
+	{
 		palitos[i] = rand()% 8 + 2;	
 		sprintf(temp,"Fileira %d: %d\n",i,palitos[i]);
 		strcat(mensagem,temp);
-			printf("%s",mensagem);		
-		
-	//}
-
+	}
+	printf("%s",mensagem);	
 }
 
 
@@ -141,6 +138,7 @@ void *connection_handler(void *socket_desc)
 		add_watcher(nickname,sock);
 
 	printf("%d\n",indice);
+	montar_palitos();
 	/*if(indice == 0)
 	{
 		printf("Hey bitch!");
